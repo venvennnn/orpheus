@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Orpheon — data consulting by two scientists on sidequests for good. Clarity from complexity."
+    />
+    <title>Orpheon — Data Consulting</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23e8f4fc'/%3E%3Cpath d='M16 6c-1.2 0-2.2.8-2.5 1.9L11 20h2.1l.6-2.4h4.6l.6 2.4H21l-2.5-12.1C18.2 6.8 17.2 6 16 6zm-1.5 9.2.9-3.8h1.2l.9 3.8h-3z' fill='%232a8fd4'/%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <canvas id="field" aria-hidden="true"></canvas>
+    <div class="atmosphere" aria-hidden="true">
+      <div class="orb orb-a"></div>
+      <div class="orb orb-b"></div>
+      <div class="orb orb-c"></div>
+    </div>
+
+    <header class="site-header">
+      <a class="logo" href="#top">Orpheon</a>
+      <nav class="nav" aria-label="Primary">
+        <a href="#work">Work</a>
+        <a href="#sidequests">Sidequests</a>
+        <a href="#team">Team</a>
+        <a class="nav-cta" href="#contact">Talk to us</a>
+      </nav>
+      <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span>
+      </button>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-stage" aria-hidden="true">
+          <svg class="lyre" viewBox="0 0 280 320" fill="none">
+            <defs>
+              <linearGradient id="lyreStroke" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#7ec8ee" />
+                <stop offset="100%" stop-color="#2a8fd4" />
+              </linearGradient>
+            </defs>
+            <path
+              class="lyre-frame"
+              d="M70 70 C70 30 210 30 210 70 L210 200 C210 250 160 280 140 290 C120 280 70 250 70 200 Z"
+              stroke="url(#lyreStroke)"
+              stroke-width="2"
+              fill="rgba(255,255,255,0.28)"
+            />
+            <path class="string s1" d="M100 78 V230" stroke="#7ec8ee" stroke-width="1.4" />
+            <path class="string s2" d="M120 72 V245" stroke="#5eb8e8" stroke-width="1.4" />
+            <path class="string s3" d="M140 70 V255" stroke="#2a8fd4" stroke-width="1.6" />
+            <path class="string s4" d="M160 72 V245" stroke="#5eb8e8" stroke-width="1.4" />
+            <path class="string s5" d="M180 78 V230" stroke="#7ec8ee" stroke-width="1.4" />
+            <circle class="note n1" cx="95" cy="120" r="3" fill="#e8a33c" />
+            <circle class="note n2" cx="185" cy="160" r="2.5" fill="#2a8fd4" />
+            <circle class="note n3" cx="140" cy="100" r="2" fill="#5eb8e8" />
+          </svg>
+          <canvas id="wave" width="900" height="180"></canvas>
+          <pre class="code-float code-a"><code>signal.harmonize(data)
+  .filter(noise)
+  .map(insight)</code></pre>
+          <pre class="code-float code-b"><code>graph.nodes.connect()
+// clarity &gt; complexity</code></pre>
+        </div>
+
+        <div class="hero-copy">
+          <p class="brand">Orpheon</p>
+          <h1>Data that finds its harmony.</h1>
+          <p class="lede">
+            Two data scientists on sidequests for good — consulting that turns messy signals into clear, human decisions.
+          </p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="#contact">Start a conversation</a>
+            <a class="btn btn-ghost" href="#work">See how we work</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="work" class="section work">
+        <div class="section-head">
+          <h2>How we work</h2>
+          <p>We listen first, model second, and ship decisions people can actually use.</p>
+        </div>
+        <ul class="work-list">
+          <li>
+            <span class="work-index">01</span>
+            <div>
+              <h3>Signal from noise</h3>
+              <p>Pipelines, audits, and exploratory analysis that surface what matters — and leave the rest behind.</p>
+            </div>
+          </li>
+          <li>
+            <span class="work-index">02</span>
+            <div>
+              <h3>Models with meaning</h3>
+              <p>Forecasting, classification, and causal thinking framed in plain language for the people who act on it.</p>
+            </div>
+          </li>
+          <li>
+            <span class="work-index">03</span>
+            <div>
+              <h3>Systems that sing</h3>
+              <p>Dashboards, notebooks, and lightweight tools designed so your team keeps the rhythm after we leave.</p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <section id="sidequests" class="section sidequests">
+        <div class="sidequests-inner">
+          <h2>Sidequests for good</h2>
+          <p>
+            Orpheon is our consulting practice and our shared mission: use data science to help people, nonprofits, and
+            early teams who deserve sharper tools without the enterprise theater.
+          </p>
+          <div class="pulse-line" aria-hidden="true">
+            <svg viewBox="0 0 800 60" preserveAspectRatio="none">
+              <path
+                class="pulse"
+                d="M0 30 H120 L140 10 L160 50 L180 20 L200 40 L220 30 H800"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <section id="team" class="section team">
+        <div class="section-head">
+          <h2>The duo</h2>
+          <p>Two data scientists. One lyre. Plenty of late-night notebooks.</p>
+        </div>
+        <div class="duo">
+          <article class="person">
+            <div class="avatar" aria-hidden="true">
+              <span>A</span>
+              <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="28" /></svg>
+            </div>
+            <h3>Partner One</h3>
+            <p>Modeling, causal inference, and turning stakeholder questions into measurable bets.</p>
+          </article>
+          <article class="person">
+            <div class="avatar" aria-hidden="true">
+              <span>B</span>
+              <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="28" /></svg>
+            </div>
+            <h3>Partner Two</h3>
+            <p>Data systems, visualization, and making complex pipelines feel calm and readable.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="contact" class="section contact">
+        <div class="contact-panel">
+          <h2>Let’s tune something real.</h2>
+          <p>Tell us what you’re wrestling with — a dataset, a decision, a sidequest worth doing.</p>
+          <form class="contact-form" action="mailto:hello@orpheon.dev" method="get" enctype="text/plain">
+            <label>
+              <span>Name</span>
+              <input type="text" name="name" autocomplete="name" required placeholder="Alex Rivera" />
+            </label>
+            <label>
+              <span>Email</span>
+              <input type="email" name="email" autocomplete="email" required placeholder="you@org.org" />
+            </label>
+            <label class="full">
+              <span>What’s the quest?</span>
+              <textarea name="body" rows="4" required placeholder="A short note about your data challenge…"></textarea>
+            </label>
+            <button class="btn btn-primary" type="submit">Send message</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p class="brand-foot">Orpheon</p>
+      <p>Data consulting · Sidequests for good</p>
+    </footer>
+
+    <script src="main.js"></script>
+  </body>
+</html>
