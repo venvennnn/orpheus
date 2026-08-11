@@ -3,28 +3,33 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#050505">
 <title>Orpheon — two data scientists on quests</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=IBM+Plex+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --white:#FFFFFF;
-  --sky:#7FC4FF;
-  --blue:#2E7BFF;
-  --deep:#1552C6;
-  --aqua:#3FD3C0;
-  --amber:#F59A16;
-  --ink:#0B1E33;
-  --muted:#5A7492;
-  --line:rgba(46,123,255,.16);
-  --glass:rgba(255,255,255,.72);
+  --white:#F4F4F4;
+  --sky:#B8B8B8;
+  --blue:#8E8E8E;
+  --deep:#D6D6D6;
+  --aqua:#A3A3A3;
+  --amber:#C4C4C4;
+  --ink:#F0F0F0;
+  --muted:#9A9A9A;
+  --line:rgba(255,255,255,.12);
+  --glass:rgba(18,18,18,.72);
+  --void:#050505;
+  --coal:#0E0E0E;
+  --ash:#1A1A1A;
   --shell:1180px;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
-  margin:0; color:var(--ink); background:var(--white);
+  margin:0; color:var(--ink); background:var(--void);
   font-family:"Plus Jakarta Sans",system-ui,sans-serif; font-weight:400;
   -webkit-font-smoothing:antialiased; overflow-x:hidden;
 }
@@ -32,7 +37,7 @@ body{
 #spot{
   position:fixed; z-index:1; pointer-events:none; width:520px; height:520px; margin:-260px 0 0 -260px;
   border-radius:50%; opacity:.55;
-  background:radial-gradient(circle, rgba(127,196,255,.35) 0%, rgba(127,196,255,0) 68%);
+  background:radial-gradient(circle, rgba(180,180,180,.18) 0%, rgba(180,180,180,0) 68%);
 }
 .page{position:relative; z-index:2}
 .shell{max-width:var(--shell); margin:0 auto; padding:0 30px}
@@ -43,7 +48,7 @@ body{
 /* ---------- nav ---------- */
 .nav{position:fixed; top:0; left:0; right:0; z-index:8; display:flex; align-items:center;
   justify-content:space-between; padding:18px 30px; transition:.4s}
-.nav.stuck{background:rgba(255,255,255,.78); backdrop-filter:blur(14px); box-shadow:0 1px 0 var(--line)}
+.nav.stuck{background:rgba(8,8,8,.82); backdrop-filter:blur(14px); box-shadow:0 1px 0 var(--line)}
 .mark{font-family:"Cinzel",serif; font-size:15px; letter-spacing:.4em; text-transform:uppercase; color:var(--ink)}
 .nav ul{display:flex; gap:30px; list-style:none; margin:0; padding:0}
 .nav a{color:var(--muted); text-decoration:none; font-family:"IBM Plex Mono",monospace;
@@ -54,8 +59,8 @@ body{
 /* ---------- buttons ---------- */
 .btn{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.16em; text-transform:uppercase;
   padding:14px 26px; border-radius:100px; text-decoration:none; display:inline-block; transition:.3s; will-change:transform}
-.btn-solid{background:linear-gradient(120deg,var(--blue),var(--sky)); color:#fff; box-shadow:0 10px 26px rgba(46,123,255,.28)}
-.btn-solid:hover{box-shadow:0 16px 38px rgba(46,123,255,.4)}
+.btn-solid{background:linear-gradient(120deg,#F2F2F2,#A8A8A8); color:#0A0A0A; box-shadow:0 10px 26px rgba(0,0,0,.45)}
+.btn-solid:hover{box-shadow:0 16px 38px rgba(0,0,0,.55)}
 .btn-ghost{border:1px solid var(--line); color:var(--ink); background:var(--glass)}
 .btn-ghost:hover{border-color:var(--blue); color:var(--blue)}
 
@@ -65,8 +70,8 @@ body{
 .eyebrow{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.28em; text-transform:uppercase;
   color:var(--blue); margin:0 0 22px; display:flex; align-items:center; gap:12px}
 .eyebrow i{width:7px; height:7px; border-radius:50%; background:var(--aqua);
-  box-shadow:0 0 0 0 rgba(63,211,192,.6); animation:pulse 2.2s infinite}
-@keyframes pulse{70%{box-shadow:0 0 0 12px rgba(63,211,192,0)}100%{box-shadow:0 0 0 0 rgba(63,211,192,0)}}
+  box-shadow:0 0 0 0 rgba(200,200,200,.55); animation:pulse 2.2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 12px rgba(200,200,200,0)}100%{box-shadow:0 0 0 0 rgba(200,200,200,0)}}
 .wordmark{font-family:"Cinzel",serif; font-weight:400; font-size:clamp(46px,7.4vw,104px); line-height:1;
   letter-spacing:.08em; margin:0 0 26px; text-transform:uppercase}
 .wordmark span{display:inline-block; opacity:0; transform:translateY(22px); filter:blur(6px);
@@ -80,7 +85,7 @@ h1.tag em{font-style:normal; background:linear-gradient(100deg,var(--blue),var(-
 .actions{display:flex; gap:12px; flex-wrap:wrap; margin-top:34px}
 
 .panel{background:var(--glass); backdrop-filter:blur(16px); border:1px solid var(--line);
-  border-radius:22px; padding:24px; box-shadow:0 24px 60px rgba(21,82,198,.12)}
+  border-radius:22px; padding:24px; box-shadow:0 24px 60px rgba(0,0,0,.45)}
 .panel-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px}
 .panel-top b{font-size:13px; font-weight:600}
 .panel-top span{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.14em;
@@ -91,7 +96,7 @@ h1.tag em{font-style:normal; background:linear-gradient(100deg,var(--blue),var(-
 .legend i{display:inline-block; width:16px; height:2px; vertical-align:middle; margin-right:6px; border-radius:2px}
 .stats{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin-top:20px;
   background:var(--line); border-radius:14px; overflow:hidden}
-.stat{background:rgba(255,255,255,.8); padding:16px 14px}
+.stat{background:rgba(28,28,28,.9); padding:16px 14px}
 .stat b{display:block; font-size:26px; font-weight:700; letter-spacing:-.02em; color:var(--deep)}
 .stat span{font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.12em;
   text-transform:uppercase; color:var(--muted)}
@@ -119,13 +124,13 @@ section{padding:110px 0; position:relative}
 .person{background:var(--glass); backdrop-filter:blur(12px); border:1px solid var(--line);
   border-radius:22px; padding:30px 28px 34px; display:flex; gap:24px; align-items:center;
   transition:box-shadow .4s, border-color .4s}
-.person:hover{box-shadow:0 26px 60px rgba(21,82,198,.16); border-color:rgba(46,123,255,.34)}
+.person:hover{box-shadow:0 26px 60px rgba(0,0,0,.5); border-color:rgba(255,255,255,.22)}
 .radar{position:relative; width:228px; height:228px; flex:none}
 .radar canvas{position:absolute; inset:0; width:100%; height:100%}
 .radar .face{
   position:absolute; left:50%; top:50%; width:96px; height:96px; margin:-48px 0 0 -48px;
   border-radius:50%; overflow:hidden;
-  box-shadow:0 10px 26px rgba(21,82,198,.22), 0 0 0 4px #fff, 0 0 0 5px var(--line);
+  box-shadow:0 10px 26px rgba(0,0,0,.45), 0 0 0 4px #111, 0 0 0 5px var(--line);
   animation:float 6s ease-in-out infinite;
 }
 .radar .face img,.radar .face svg{width:100%; height:100%; object-fit:cover; display:block}
@@ -133,8 +138,8 @@ section{padding:110px 0; position:relative}
 .radar .lvl{
   position:absolute; left:50%; bottom:0; transform:translateX(-50%);
   font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.14em; text-transform:uppercase;
-  background:#fff; border:1px solid var(--line); color:var(--deep); padding:4px 10px; border-radius:100px;
-  box-shadow:0 6px 16px rgba(21,82,198,.12); white-space:nowrap}
+  background:#141414; border:1px solid var(--line); color:var(--deep); padding:4px 10px; border-radius:100px;
+  box-shadow:0 6px 16px rgba(0,0,0,.35); white-space:nowrap}
 .person-body{min-width:0}
 .person h3{margin:0 0 4px; font-size:21px; font-weight:600; letter-spacing:-.01em}
 .person .handle{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.16em;
@@ -144,13 +149,13 @@ section{padding:110px 0; position:relative}
 .person p.bio{margin:0 0 16px; color:var(--muted); font-size:15px; line-height:1.7; font-weight:300}
 .chips{display:flex; flex-wrap:wrap; gap:7px; margin:0; padding:0; list-style:none}
 .chips li{font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
-  background:rgba(46,123,255,.09); color:var(--deep); padding:5px 10px; border-radius:100px}
+  background:rgba(255,255,255,.08); color:var(--deep); padding:5px 10px; border-radius:100px}
 
 /* ---------- the lyre ---------- */
 .lyre-sec{padding:96px 0 90px}
 .lyre-wrap{position:relative; background:var(--glass); backdrop-filter:blur(12px);
   border:1px solid var(--line); border-radius:26px; overflow:hidden;
-  box-shadow:0 24px 60px rgba(21,82,198,.12)}
+  box-shadow:0 24px 60px rgba(0,0,0,.45)}
 #lyre{display:block; width:100%; height:470px; touch-action:none; cursor:crosshair}
 .lyre-bar{display:flex; align-items:center; justify-content:space-between; gap:16px;
   padding:16px 22px; border-top:1px solid var(--line); flex-wrap:wrap}
@@ -159,10 +164,10 @@ section{padding:110px 0; position:relative}
 .lyre-hint b{color:var(--deep); font-weight:500}
 .lyre-ctrl{display:flex; align-items:center; gap:10px}
 .mini{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase;
-  padding:9px 16px; border-radius:100px; border:1px solid var(--line); background:#fff; color:var(--deep);
+  padding:9px 16px; border-radius:100px; border:1px solid var(--line); background:#141414; color:var(--deep);
   cursor:pointer; transition:.25s}
 .mini:hover{border-color:var(--blue); color:var(--blue)}
-.mini[aria-pressed="true"]{background:linear-gradient(120deg,var(--blue),var(--sky)); color:#fff; border-color:transparent}
+.mini[aria-pressed="true"]{background:linear-gradient(120deg,#F2F2F2,#A8A8A8); color:#0A0A0A; border-color:transparent}
 .string-keys{position:absolute; inset:0; display:flex; justify-content:center; pointer-events:none}
 .string-keys button{width:34px; border:0; background:transparent; pointer-events:auto; cursor:pointer;
   color:transparent; font-size:0}
@@ -173,7 +178,7 @@ section{padding:110px 0; position:relative}
   font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:500;
   letter-spacing:.14em; text-transform:uppercase; white-space:nowrap;
   color:var(--deep); opacity:0; transform:translate(-50%,-50%) scale(.85);
-  text-shadow:0 0 18px rgba(127,196,255,.55);
+  text-shadow:0 0 18px rgba(255,255,255,.25);
   animation:wordBurst 1.35s cubic-bezier(.2,.7,.2,1) forwards;
   will-change:transform, opacity;
 }
@@ -255,8 +260,8 @@ footer span{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacin
           <div class="panel-top"><b>Quest status</b><span>● Live</span></div>
           <canvas id="chart" aria-label="Chart of ongoing work"></canvas>
           <div class="legend">
-            <span><i style="background:#2E7BFF"></i> Hours logged</span>
-            <span><i style="background:#3FD3C0"></i> Questions answered</span>
+            <span><i style="background:#D0D0D0"></i> Hours logged</span>
+            <span><i style="background:#888888"></i> Questions answered</span>
           </div>
           <div class="stats">
             <div class="stat"><b data-count="0">0</b><span>Quests completed</span></div>
@@ -305,17 +310,17 @@ footer span{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacin
             <div class="face">
               <svg viewBox="0 0 100 100" role="img" aria-label="Sensei sigil">
                 <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stop-color="#2E7BFF"/><stop offset="1" stop-color="#7FC4FF"/>
+                  <stop offset="0" stop-color="#F0F0F0"/><stop offset="1" stop-color="#8A8A8A"/>
                 </linearGradient></defs>
-                <rect width="100" height="100" fill="#EAF3FF"/>
+                <rect width="100" height="100" fill="#1A1A1A"/>
                 <circle cx="50" cy="50" r="31" fill="none" stroke="url(#sg)" stroke-width="1.3" opacity=".5"/>
                 <circle cx="50" cy="50" r="23" fill="none" stroke="url(#sg)" stroke-width="1" opacity=".35" stroke-dasharray="3 5"/>
                 <path d="M50 22 L50 80" stroke="url(#sg)" stroke-width="3.4" stroke-linecap="round"/>
                 <path d="M38 32 A16 16 0 1 1 62 32" fill="none" stroke="url(#sg)" stroke-width="3.4" stroke-linecap="round"/>
-                <circle cx="50" cy="26" r="4.6" fill="#3FD3C0"/>
+                <circle cx="50" cy="26" r="4.6" fill="#D8D8D8"/>
                 <path d="M50 60 l7 7 -7 7 -7 -7 Z" fill="url(#sg)" opacity=".85"/>
-                <circle cx="26" cy="36" r="1.9" fill="#3FD3C0"/><circle cx="76" cy="60" r="1.9" fill="#3FD3C0"/>
-                <circle cx="72" cy="30" r="1.2" fill="#2E7BFF"/><circle cx="28" cy="68" r="1.2" fill="#2E7BFF"/>
+                <circle cx="26" cy="36" r="1.9" fill="#BDBDBD"/><circle cx="76" cy="60" r="1.9" fill="#BDBDBD"/>
+                <circle cx="72" cy="30" r="1.2" fill="#8A8A8A"/><circle cx="28" cy="68" r="1.2" fill="#8A8A8A"/>
               </svg>
             </div>
             <span class="lvl">Lv. 99 · Sensei</span>
@@ -335,14 +340,14 @@ footer span{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacin
             <div class="face">
               <svg viewBox="0 0 100 100" role="img" aria-label="Student sigil">
                 <defs><linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stop-color="#FFDB92"/><stop offset="1" stop-color="#FFB13D"/>
+                  <stop offset="0" stop-color="#E8E8E8"/><stop offset="1" stop-color="#777777"/>
                 </linearGradient></defs>
-                <rect width="100" height="100" fill="#FFF6E2"/>
-                <circle cx="50" cy="50" r="31" fill="none" stroke="#FFB13D" stroke-width="1.3" opacity=".5"/>
-                <circle cx="50" cy="50" r="23" fill="none" stroke="#FFB13D" stroke-width="1" opacity=".35" stroke-dasharray="3 5"/>
-                <path d="M57 20 L36 52 H50 L43 80 L66 46 H52 Z" fill="url(#bg2)" stroke="#F59A16" stroke-width="1.6" stroke-linejoin="round"/>
-                <circle cx="27" cy="34" r="2" fill="#F59A16"/><circle cx="75" cy="64" r="2" fill="#F59A16"/>
-                <circle cx="73" cy="32" r="1.3" fill="#FFB13D"/><circle cx="27" cy="66" r="1.3" fill="#FFB13D"/>
+                <rect width="100" height="100" fill="#161616"/>
+                <circle cx="50" cy="50" r="31" fill="none" stroke="#9A9A9A" stroke-width="1.3" opacity=".5"/>
+                <circle cx="50" cy="50" r="23" fill="none" stroke="#9A9A9A" stroke-width="1" opacity=".35" stroke-dasharray="3 5"/>
+                <path d="M57 20 L36 52 H50 L43 80 L66 46 H52 Z" fill="url(#bg2)" stroke="#C8C8C8" stroke-width="1.6" stroke-linejoin="round"/>
+                <circle cx="27" cy="34" r="2" fill="#C8C8C8"/><circle cx="75" cy="64" r="2" fill="#C8C8C8"/>
+                <circle cx="73" cy="32" r="1.3" fill="#9A9A9A"/><circle cx="27" cy="66" r="1.3" fill="#9A9A9A"/>
               </svg>
             </div>
             <span class="lvl">Lv. 42 · Student</span>
@@ -434,8 +439,8 @@ document.querySelectorAll('.magnet').forEach(b=>{
 
 /* ---------- party radar charts ---------- */
 const RADAR = [
-  {axes:['Stats','Causal','Rigour','Domain','Patience','Writing'], vals:[.97,.94,.99,.82,1.0,.88], col:'#1552C6', col2:'#7FC4FF'},
-  {axes:['Engineering','Automation','Speed','Dashboards','Stats','Docs'], vals:[.92,.96,.90,.82,.60,.66], col:'#F59A16', col2:'#FFD07A'}
+  {axes:['Stats','Causal','Rigour','Domain','Patience','Writing'], vals:[.97,.94,.99,.82,1.0,.88], col:'#E8E8E8', col2:'#8A8A8A'},
+  {axes:['Engineering','Automation','Speed','Dashboards','Stats','Docs'], vals:[.92,.96,.90,.82,.60,.66], col:'#C8C8C8', col2:'#6E6E6E'}
 ];
 const radars = [...document.querySelectorAll('[data-radar]')].map(cv=>{
   const c = cv.getContext('2d'), cfg = RADAR[+cv.dataset.radar];
@@ -467,13 +472,13 @@ function drawRadars(t){
         i?c.lineTo(x,y):c.moveTo(x,y);
       }
       c.closePath();
-      c.strokeStyle = k===4 ? 'rgba(46,123,255,.22)' : 'rgba(46,123,255,.11)';
+      c.strokeStyle = k===4 ? 'rgba(255,255,255,.22)' : 'rgba(255,255,255,.10)';
       c.lineWidth = 1; c.stroke();
     }
     for(let i=0;i<N;i++){
       const a=ang(i);
       c.beginPath(); c.moveTo(cx,cy); c.lineTo(cx+Math.cos(a)*R, cy+Math.sin(a)*R);
-      c.strokeStyle='rgba(46,123,255,.10)'; c.stroke();
+      c.strokeStyle='rgba(255,255,255,.08)'; c.stroke();
     }
 
     const pts = cfg.vals.map((v,i)=>{
@@ -493,7 +498,7 @@ function drawRadars(t){
 
     c.font='600 8px "IBM Plex Mono", monospace';
     c.textAlign='center'; c.textBaseline='middle';
-    c.fillStyle='rgba(90,116,146,'+(0.35+0.55*e)+')';
+    c.fillStyle='rgba(170,170,170,'+(0.35+0.55*e)+')';
     cfg.axes.forEach((lab,i)=>{
       const a=ang(i), rr=R+13;
       c.fillText(lab.toUpperCase(), cx+Math.cos(a)*rr, cy+Math.sin(a)*rr);
@@ -615,7 +620,7 @@ function buildLyre(s){
     if(img[(y*o.width+x)*4+3] > 90 && Math.random() > .16){
       pts.push({ox:x, oy:y, r:Math.random()*1.4+0.6, ph:Math.random()*6.28,
                 sp:Math.random()*0.9+0.25, j:Math.random()*1.6+0.4,
-                c: Math.random()<.22 ? '#3FD3C0' : (Math.random()<.25 ? '#7FC4FF' : '#2E7BFF')});
+                c: Math.random()<.22 ? '#F0F0F0' : (Math.random()<.25 ? '#A0A0A0' : '#6A6A6A')});
     }
   }
   return {pts, w:o.width, h:o.height, mid:mid+pad, barY:barY+pad, boxTop:boxTop+pad, spread:s*0.46};
@@ -635,13 +640,13 @@ function drawLyreDots(c, m, ox, oy, alpha, t){
 
 function drawStrings(c, m, ox, oy, amps, alpha, t){
   const gap = m.spread/(STRINGS-1), y0 = oy + m.barY, y1 = oy + m.boxTop;
-  c.shadowBlur = 8; c.shadowColor = '#7FC4FF';
+  c.shadowBlur = 8; c.shadowColor = '#FFFFFF';
   for(let i=0;i<STRINGS;i++){
     const a = amps[i];
     a.amp *= 0.945; a.phase += 0.34;
     const sx = ox + m.mid + (i-(STRINGS-1)/2)*gap;
     c.globalAlpha = alpha * (0.5 + Math.min(.5, a.amp/16));
-    c.strokeStyle = a.amp > 1 ? '#1552C6' : 'rgba(46,123,255,.7)';
+    c.strokeStyle = a.amp > 1 ? '#F2F2F2' : 'rgba(200,200,200,.7)';
     c.lineWidth = 1 + Math.min(1.6, a.amp/10);
     c.beginPath();
     for(let y=y0;y<=y1;y+=5){
@@ -781,9 +786,9 @@ for(let i=0;i<38;i++){seriesA.push(Math.random()*.4+.3); seriesB.push(Math.rando
 function drawChart(t){
   if(!cw) return;
   cx2.clearRect(0,0,cw,chh);
-  cx2.strokeStyle='rgba(46,123,255,.10)'; cx2.lineWidth=1;
+  cx2.strokeStyle='rgba(255,255,255,.10)'; cx2.lineWidth=1;
   for(let i=0;i<=4;i++){const y=10+i*(chh-30)/4; cx2.beginPath(); cx2.moveTo(0,y); cx2.lineTo(cw,y); cx2.stroke();}
-  [[seriesA,'#2E7BFF','rgba(46,123,255,.16)',0],[seriesB,'#3FD3C0','rgba(63,211,192,.16)',1.7]].forEach(([s,col,fill,off])=>{
+  [[seriesA,'#E6E6E6','rgba(255,255,255,.14)',0],[seriesB,'#8A8A8A','rgba(160,160,160,.14)',1.7]].forEach(([s,col,fill,off])=>{
     const pts=s.map((v,i)=>{
       const x=i/(s.length-1)*cw;
       const wave=Math.sin(t*.9+i*.34+off)*.06+Math.sin(t*.4+i*.12)*.04;
@@ -824,10 +829,10 @@ function resize(){
   }));
 
   blobs=[
-    {x:.18,y:.22,r:.55,c:[127,196,255],sp:.11,ph:0},
-    {x:.82,y:.30,r:.48,c:[63,211,192],sp:.09,ph:2.1},
-    {x:.60,y:.80,r:.62,c:[46,123,255],sp:.07,ph:4.2},
-    {x:.30,y:.72,r:.44,c:[168,199,255],sp:.13,ph:1.2}
+    {x:.18,y:.22,r:.55,c:[80,80,80],sp:.11,ph:0},
+    {x:.82,y:.30,r:.48,c:[120,120,120],sp:.09,ph:2.1},
+    {x:.60,y:.80,r:.62,c:[50,50,50],sp:.07,ph:4.2},
+    {x:.30,y:.72,r:.44,c:[95,95,95],sp:.13,ph:1.2}
   ];
   sizeChart();
   sizeLyre();
@@ -843,7 +848,7 @@ function frame(){
   spot.style.transform=`translate(${sx}px,${sy}px)`;
 
   const g=ctx.createLinearGradient(0,0,W*.4,H);
-  g.addColorStop(0,'#FFFFFF'); g.addColorStop(.55,'#F4F9FF'); g.addColorStop(1,'#E4F0FF');
+  g.addColorStop(0,'#050505'); g.addColorStop(.55,'#0E0E0E'); g.addColorStop(1,'#1A1A1A');
   ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
 
   blobs.forEach(b=>{
@@ -851,7 +856,7 @@ function frame(){
     const by=(b.y+Math.cos(t*b.sp*1.3+b.ph)*.08)*H;
     const br=b.r*Math.max(W,H)*(0.6+0.06*Math.sin(t*b.sp*2+b.ph));
     const rg=ctx.createRadialGradient(bx,by,0,bx,by,br);
-    rg.addColorStop(0,`rgba(${b.c[0]},${b.c[1]},${b.c[2]},.30)`);
+    rg.addColorStop(0,`rgba(${b.c[0]},${b.c[1]},${b.c[2]},.38)`);
     rg.addColorStop(1,`rgba(${b.c[0]},${b.c[1]},${b.c[2]},0)`);
     ctx.fillStyle=rg; ctx.fillRect(0,0,W,H);
   });
@@ -862,7 +867,7 @@ function frame(){
     const wave=Math.sin(t*1.5+d.ph)*.5+.5;
     const r=(0.8+wave*0.7)+near*2.6, push=near*14;
     ctx.globalAlpha=.10+wave*.10+near*.45;
-    ctx.fillStyle=near>.45?'#3FD3C0':'#2E7BFF';
+    ctx.fillStyle=near>.45?'#F0F0F0':'#8A8A8A';
     ctx.beginPath();
     ctx.arc(d.x+(dist?dx/dist*push:0), d.y+(dist?dy/dist*push:0), r, 0, 7);
     ctx.fill();
@@ -878,13 +883,13 @@ function frame(){
       const m=nodes[j], d=Math.hypot(n.x-m.x,n.y-m.y);
       if(d<150){
         ctx.globalAlpha=(1-d/150)*.20;
-        ctx.strokeStyle='#2E7BFF'; ctx.lineWidth=1;
+        ctx.strokeStyle='#9A9A9A'; ctx.lineWidth=1;
         ctx.beginPath(); ctx.moveTo(n.x,n.y); ctx.lineTo(m.x,m.y); ctx.stroke();
       }
     }
     const near=Math.max(0,1-Math.hypot(n.x-pointer.ex,n.y-pointer.ey)/240);
     ctx.globalAlpha=.22+near*.5;
-    ctx.fillStyle=near>.5?'#1552C6':'#7FC4FF';
+    ctx.fillStyle=near>.5?'#F5F5F5':'#7A7A7A';
     ctx.beginPath(); ctx.arc(n.x,n.y,n.r+near*2,0,7); ctx.fill();
   }
 
@@ -895,7 +900,7 @@ function frame(){
       const y=H*0.86+Math.sin(x*0.006+t*0.8+k*1.4)*26+Math.sin(x*0.017-t*1.1+k)*10+k*16;
       x?ctx.lineTo(x,y):ctx.moveTo(x,y);
     }
-    ctx.strokeStyle=k===1?'rgba(63,211,192,.28)':'rgba(46,123,255,.20)';
+    ctx.strokeStyle=k===1?'rgba(200,200,200,.28)':'rgba(140,140,140,.20)';
     ctx.lineWidth=1.4; ctx.stroke();
   }
   ctx.globalAlpha=1;
@@ -907,11 +912,11 @@ function frame(){
   if(lyreModel){
     lc.clearRect(0,0,lw,lh);
     const lg = lc.createLinearGradient(0,0,lw,lh);
-    lg.addColorStop(0,'rgba(255,255,255,0)'); lg.addColorStop(1,'rgba(206,232,255,.35)');
+    lg.addColorStop(0,'rgba(255,255,255,0)'); lg.addColorStop(1,'rgba(255,255,255,.08)');
     lc.fillStyle = lg; lc.fillRect(0,0,lw,lh);
     for(let x=0;x<lw;x+=22){
       const y = lh*0.5 + Math.sin(x*0.012 + t*1.2)*(6 + amps.reduce((a,b)=>a+b.amp,0)*0.5);
-      lc.globalAlpha = .18; lc.fillStyle = '#7FC4FF';
+      lc.globalAlpha = .18; lc.fillStyle = '#C8C8C8';
       lc.fillRect(x, y, 2, 2);
     }
     lc.globalAlpha = 1;
