@@ -1,189 +1,881 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Orpheon — two data scientists doing the work nobody has budget for. Sidequests for clinics, nonprofits, teachers, and co-ops."
-    />
-    <title>Orpheon — Sidequests for Good</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23e8f4fc'/%3E%3Cpath d='M16 6c-1.2 0-2.2.8-2.5 1.9L11 20h2.1l.6-2.4h4.6l.6 2.4H21l-2.5-12.1C18.2 6.8 17.2 6 16 6zm-1.5 9.2.9-3.8h1.2l.9 3.8h-3z' fill='%232a8fd4'/%3E%3C/svg%3E" />
-  </head>
-  <body>
-    <canvas id="field" aria-hidden="true"></canvas>
-    <div class="atmosphere" aria-hidden="true">
-      <div class="orb orb-a"></div>
-      <div class="orb orb-b"></div>
-      <div class="orb orb-c"></div>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orpheon — two data scientists on quests</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=IBM+Plex+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#FFFFFF;
+  --sky:#7FC4FF;
+  --blue:#2E7BFF;
+  --deep:#1552C6;
+  --aqua:#3FD3C0;
+  --amber:#F59A16;
+  --ink:#0B1E33;
+  --muted:#5A7492;
+  --line:rgba(46,123,255,.16);
+  --glass:rgba(255,255,255,.72);
+  --shell:1180px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; color:var(--ink); background:var(--white);
+  font-family:"Plus Jakarta Sans",system-ui,sans-serif; font-weight:400;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+#bg{position:fixed; inset:0; width:100%; height:100%; z-index:0; display:block}
+#spot{
+  position:fixed; z-index:1; pointer-events:none; width:520px; height:520px; margin:-260px 0 0 -260px;
+  border-radius:50%; opacity:.55;
+  background:radial-gradient(circle, rgba(127,196,255,.35) 0%, rgba(127,196,255,0) 68%);
+}
+.page{position:relative; z-index:2}
+.shell{max-width:var(--shell); margin:0 auto; padding:0 30px}
+
+#progress{position:fixed; top:0; left:0; height:2px; width:0; z-index:9;
+  background:linear-gradient(90deg,var(--aqua),var(--sky),var(--blue))}
+
+/* ---------- nav ---------- */
+.nav{position:fixed; top:0; left:0; right:0; z-index:8; display:flex; align-items:center;
+  justify-content:space-between; padding:18px 30px; transition:.4s}
+.nav.stuck{background:rgba(255,255,255,.78); backdrop-filter:blur(14px); box-shadow:0 1px 0 var(--line)}
+.mark{font-family:"Cinzel",serif; font-size:15px; letter-spacing:.4em; text-transform:uppercase; color:var(--ink)}
+.nav ul{display:flex; gap:30px; list-style:none; margin:0; padding:0}
+.nav a{color:var(--muted); text-decoration:none; font-family:"IBM Plex Mono",monospace;
+  font-size:11px; letter-spacing:.14em; text-transform:uppercase; transition:color .25s}
+.nav a:hover{color:var(--blue)}
+.nav .menu{display:flex; align-items:center; gap:30px}
+
+/* ---------- buttons ---------- */
+.btn{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  padding:14px 26px; border-radius:100px; text-decoration:none; display:inline-block; transition:.3s; will-change:transform}
+.btn-solid{background:linear-gradient(120deg,var(--blue),var(--sky)); color:#fff; box-shadow:0 10px 26px rgba(46,123,255,.28)}
+.btn-solid:hover{box-shadow:0 16px 38px rgba(46,123,255,.4)}
+.btn-ghost{border:1px solid var(--line); color:var(--ink); background:var(--glass)}
+.btn-ghost:hover{border-color:var(--blue); color:var(--blue)}
+
+/* ---------- hero ---------- */
+.hero{min-height:100svh; display:flex; align-items:center; padding:120px 0 70px}
+.hero-grid{display:grid; grid-template-columns:1.05fr .95fr; gap:56px; align-items:center; width:100%}
+.eyebrow{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.28em; text-transform:uppercase;
+  color:var(--blue); margin:0 0 22px; display:flex; align-items:center; gap:12px}
+.eyebrow i{width:7px; height:7px; border-radius:50%; background:var(--aqua);
+  box-shadow:0 0 0 0 rgba(63,211,192,.6); animation:pulse 2.2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 12px rgba(63,211,192,0)}100%{box-shadow:0 0 0 0 rgba(63,211,192,0)}}
+.wordmark{font-family:"Cinzel",serif; font-weight:400; font-size:clamp(46px,7.4vw,104px); line-height:1;
+  letter-spacing:.08em; margin:0 0 26px; text-transform:uppercase}
+.wordmark span{display:inline-block; opacity:0; transform:translateY(22px); filter:blur(6px);
+  background:linear-gradient(180deg,var(--ink) 30%,var(--deep));
+  -webkit-background-clip:text; background-clip:text; color:transparent}
+h1.tag{font-size:clamp(24px,3.1vw,40px); font-weight:600; line-height:1.2; margin:0 0 22px;
+  letter-spacing:-.02em; max-width:16ch}
+h1.tag em{font-style:normal; background:linear-gradient(100deg,var(--blue),var(--aqua));
+  -webkit-background-clip:text; background-clip:text; color:transparent}
+.lede{margin:0; color:var(--muted); font-size:17px; line-height:1.7; max-width:47ch; font-weight:300}
+.actions{display:flex; gap:12px; flex-wrap:wrap; margin-top:34px}
+
+.panel{background:var(--glass); backdrop-filter:blur(16px); border:1px solid var(--line);
+  border-radius:22px; padding:24px; box-shadow:0 24px 60px rgba(21,82,198,.12)}
+.panel-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px}
+.panel-top b{font-size:13px; font-weight:600}
+.panel-top span{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--aqua)}
+#chart{width:100%; height:190px; display:block}
+.legend{display:flex; gap:18px; margin-top:10px; font-family:"IBM Plex Mono",monospace; font-size:10px;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+.legend i{display:inline-block; width:16px; height:2px; vertical-align:middle; margin-right:6px; border-radius:2px}
+.stats{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin-top:20px;
+  background:var(--line); border-radius:14px; overflow:hidden}
+.stat{background:rgba(255,255,255,.8); padding:16px 14px}
+.stat b{display:block; font-size:26px; font-weight:700; letter-spacing:-.02em; color:var(--deep)}
+.stat span{font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--muted)}
+
+/* ---------- marquee ---------- */
+.marquee{overflow:hidden; border-block:1px solid var(--line); padding:18px 0;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.marquee div{display:flex; gap:44px; width:max-content; animation:slide 34s linear infinite}
+.marquee span{font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--muted); white-space:nowrap}
+.marquee span::before{content:"◇"; color:var(--sky); margin-right:14px}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+/* ---------- sections ---------- */
+section{padding:110px 0; position:relative}
+.head{margin-bottom:52px; max-width:60ch}
+.head .kicker{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--blue); margin:0 0 14px}
+.head h2{font-size:clamp(28px,3.6vw,44px); font-weight:600; letter-spacing:-.02em; margin:0 0 14px; line-height:1.15}
+.head p{margin:0; color:var(--muted); font-size:17px; line-height:1.7; font-weight:300}
+
+/* ---------- the party ---------- */
+.crew{display:grid; grid-template-columns:1fr 1fr; gap:20px}
+.person{background:var(--glass); backdrop-filter:blur(12px); border:1px solid var(--line);
+  border-radius:22px; padding:30px 28px 34px; display:flex; gap:24px; align-items:center;
+  transition:box-shadow .4s, border-color .4s}
+.person:hover{box-shadow:0 26px 60px rgba(21,82,198,.16); border-color:rgba(46,123,255,.34)}
+.radar{position:relative; width:228px; height:228px; flex:none}
+.radar canvas{position:absolute; inset:0; width:100%; height:100%}
+.radar .face{
+  position:absolute; left:50%; top:50%; width:96px; height:96px; margin:-48px 0 0 -48px;
+  border-radius:50%; overflow:hidden;
+  box-shadow:0 10px 26px rgba(21,82,198,.22), 0 0 0 4px #fff, 0 0 0 5px var(--line);
+  animation:float 6s ease-in-out infinite;
+}
+.radar .face img,.radar .face svg{width:100%; height:100%; object-fit:cover; display:block}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.radar .lvl{
+  position:absolute; left:50%; bottom:0; transform:translateX(-50%);
+  font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.14em; text-transform:uppercase;
+  background:#fff; border:1px solid var(--line); color:var(--deep); padding:4px 10px; border-radius:100px;
+  box-shadow:0 6px 16px rgba(21,82,198,.12); white-space:nowrap}
+.person-body{min-width:0}
+.person h3{margin:0 0 4px; font-size:21px; font-weight:600; letter-spacing:-.01em}
+.person .handle{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--aqua); margin:0 0 10px}
+.person .role{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--blue); margin:0 0 12px}
+.person p.bio{margin:0 0 16px; color:var(--muted); font-size:15px; line-height:1.7; font-weight:300}
+.chips{display:flex; flex-wrap:wrap; gap:7px; margin:0; padding:0; list-style:none}
+.chips li{font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+  background:rgba(46,123,255,.09); color:var(--deep); padding:5px 10px; border-radius:100px}
+
+/* ---------- the lyre ---------- */
+.lyre-sec{padding:96px 0 90px}
+.lyre-wrap{position:relative; background:var(--glass); backdrop-filter:blur(12px);
+  border:1px solid var(--line); border-radius:26px; overflow:hidden;
+  box-shadow:0 24px 60px rgba(21,82,198,.12)}
+#lyre{display:block; width:100%; height:470px; touch-action:none; cursor:crosshair}
+.lyre-bar{display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:16px 22px; border-top:1px solid var(--line); flex-wrap:wrap}
+.lyre-hint{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--muted)}
+.lyre-hint b{color:var(--deep); font-weight:500}
+.lyre-ctrl{display:flex; align-items:center; gap:10px}
+.mini{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  padding:9px 16px; border-radius:100px; border:1px solid var(--line); background:#fff; color:var(--deep);
+  cursor:pointer; transition:.25s}
+.mini:hover{border-color:var(--blue); color:var(--blue)}
+.mini[aria-pressed="true"]{background:linear-gradient(120deg,var(--blue),var(--sky)); color:#fff; border-color:transparent}
+.string-keys{position:absolute; inset:0; display:flex; justify-content:center; pointer-events:none}
+.string-keys button{width:34px; border:0; background:transparent; pointer-events:auto; cursor:pointer;
+  color:transparent; font-size:0}
+.string-keys button:focus-visible{outline:2px solid var(--blue); outline-offset:-6px; border-radius:8px}
+@media (max-width:960px){ #lyre{height:340px} }
+
+/* ---------- close ---------- */
+.close{text-align:center; padding:130px 0}
+.close h2{font-size:clamp(30px,4.8vw,58px); font-weight:600; letter-spacing:-.025em; margin:0 0 18px; line-height:1.1}
+.close h2 em{font-style:normal; background:linear-gradient(100deg,var(--blue),var(--aqua));
+  -webkit-background-clip:text; background-clip:text; color:transparent}
+.close p{color:var(--muted); max-width:50ch; margin:0 auto 34px; line-height:1.75; font-weight:300}
+footer{border-top:1px solid var(--line); padding:30px 0; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}
+footer span{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--muted)}
+
+/* ---------- reveal ---------- */
+.rise{opacity:0; transform:translateY(24px);
+  transition:opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1)}
+.rise.in{opacity:1; transform:none}
+:focus-visible{outline:2px solid var(--blue); outline-offset:3px}
+
+@media (max-width:960px){
+  .hero-grid,.crew{grid-template-columns:1fr}
+  .hero{padding-top:104px}
+  .nav ul{display:none}
+  .person{flex-direction:column; align-items:flex-start}
+  .radar{align-self:center; width:210px; height:210px}
+  .shell{padding:0 20px}
+  section{padding:80px 0}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important; transition:none!important}
+  .wordmark span{opacity:1; transform:none; filter:none}
+  .rise{opacity:1; transform:none}
+}
+</style>
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas>
+<div id="spot" aria-hidden="true"></div>
+<div id="progress" aria-hidden="true"></div>
+
+<div class="page">
+  <nav class="nav" id="nav">
+    <div class="mark">Orpheon</div>
+    <div class="menu">
+      <ul>
+        <li><a href="#lyre-sec">The lyre</a></li>
+        <li><a href="#crew">The party</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a class="btn btn-ghost magnet" href="#contact">Send us a quest</a>
     </div>
+  </nav>
 
-    <header class="site-header">
-      <a class="logo" href="#top">Orpheon</a>
-      <nav class="nav" aria-label="Primary">
-        <a href="#help">How we help</a>
-        <a href="#log">Quest log</a>
-        <a href="#contact">Contact</a>
-        <a class="nav-cta" href="#contact">Send us a quest</a>
-      </nav>
-      <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
-        <span></span><span></span>
-      </button>
-    </header>
-
-    <main id="top">
-      <section class="hero">
-        <div class="hero-lyre" aria-hidden="true">
-          <svg class="lyre-outline" viewBox="0 0 280 340" fill="none">
-            <defs>
-              <linearGradient id="lyreStroke" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#9ad0ef" />
-                <stop offset="100%" stop-color="#2a8fd4" />
-              </linearGradient>
-            </defs>
-            <path
-              class="lyre-frame"
-              d="M78 95 C68 55 95 28 140 28 C185 28 212 55 202 95 L198 210 C196 248 170 278 140 300 C110 278 84 248 82 210 Z"
-              stroke="url(#lyreStroke)"
-              stroke-width="1.6"
-              fill="rgba(255,255,255,0.18)"
-            />
-            <path d="M88 92 C110 72 170 72 192 92" stroke="#7ec8ee" stroke-width="1.6" fill="none" />
-            <path class="string s1" d="M100 95 V225" stroke="#9ad0ef" stroke-width="1.2" />
-            <path class="string s2" d="M120 88 V240" stroke="#5eb8e8" stroke-width="1.2" />
-            <path class="string s3" d="M140 84 V250" stroke="#2a8fd4" stroke-width="1.4" />
-            <path class="string s4" d="M160 88 V240" stroke="#5eb8e8" stroke-width="1.2" />
-            <path class="string s5" d="M180 95 V225" stroke="#9ad0ef" stroke-width="1.2" />
-            <path d="M98 228 H182" stroke="#2a8fd4" stroke-width="1.3" opacity="0.55" />
-          </svg>
-        </div>
-
-        <div class="hero-copy">
-          <p class="status-tag">
-            <span class="dot" aria-hidden="true"></span>
-            Taking on two quests at a time
-          </p>
-          <p class="brand">Orpheon</p>
-          <h1>
-            Two data scientists, doing the work
-            <em>nobody has budget for.</em>
-          </h1>
-          <p class="lede">
-            Orpheon is a small data consultancy run on evenings and weekends. We take on projects for the people who
-            need the analysis most and can afford it least — clinics, small nonprofits, teachers, local co-ops — and we
-            finish them.
-          </p>
-          <div class="cta-row">
-            <a class="btn btn-primary" href="#contact">Send us a quest</a>
-            <a class="btn btn-ghost" href="#log">Read the quest log</a>
+  <header class="hero">
+    <div class="shell">
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow"><i></i> Nine quests currently in progress</p>
+          <div class="wordmark" id="wordmark" aria-label="Orpheon"></div>
+          <h1 class="tag rise">Two data scientists, on quests <em>for the greater good</em>.</h1>
+          <p class="lede rise">This is what we do full time. We take quests from anyone — companies, labs, research groups, one person with a spreadsheet that has defeated them — and we don't put one down until the answer is out of it. If you've got a fun one, send it our way.</p>
+          <div class="actions rise">
+            <a class="btn btn-solid magnet" href="#contact">Send us a quest</a>
+            <a class="btn btn-ghost magnet" href="#crew">Meet the party</a>
           </div>
         </div>
-      </section>
 
-      <section id="log" class="section live">
-        <div class="live-panel">
-          <div class="live-head">
-            <h2>Live: quests in progress</h2>
-            <p class="updating">
-              <span class="dot" aria-hidden="true"></span>
-              Updating
-            </p>
+        <div class="panel rise">
+          <div class="panel-top"><b>Quest status</b><span>● Live</span></div>
+          <canvas id="chart" aria-label="Chart of ongoing work"></canvas>
+          <div class="legend">
+            <span><i style="background:#2E7BFF"></i> Hours logged</span>
+            <span><i style="background:#3FD3C0"></i> Questions answered</span>
           </div>
-          <canvas id="quest-chart" width="900" height="280" aria-label="Chart of hours given and questions answered"></canvas>
-          <div class="chart-legend">
-            <span><i class="swatch hours"></i> Hours given</span>
-            <span><i class="swatch questions"></i> Questions answered</span>
-          </div>
-          <div class="live-stats">
-            <div>
-              <strong>14</strong>
-              <span>Quests closed</span>
-            </div>
-            <div>
-              <strong>9M</strong>
-              <span>Rows untangled</span>
-            </div>
-            <div>
-              <strong>₹0</strong>
-              <span>Charged to nonprofits</span>
-            </div>
+          <div class="stats">
+            <div class="stat"><b data-count="0">0</b><span>Quests completed</span></div>
+            <div class="stat"><b data-count="9">0</b><span>Quests in progress</span></div>
+            <div class="stat"><b data-count="10" data-suffix="M">0</b><span>Rows untangled</span></div>
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  </header>
 
-      <section id="help" class="section help">
-        <p class="section-tag">How we help</p>
-        <h2>Most people don’t need a data platform. They need one honest answer.</h2>
-        <p class="help-copy">
-          We start with the question you actually have, work with the data you already keep, and hand back something
-          you can use without us in the room.
-        </p>
-        <ul class="help-list">
-          <li>
-            <span class="help-index">01</span>
-            <div>
-              <h3>Name the real question</h3>
-              <p>We cut through tool FOMO and find the decision you’re actually trying to make.</p>
-            </div>
-          </li>
-          <li>
-            <span class="help-index">02</span>
-            <div>
-              <h3>Work with what you have</h3>
-              <p>Spreadsheets, exports, half-finished CRMs — we meet your data where it lives.</p>
-            </div>
-          </li>
-          <li>
-            <span class="help-index">03</span>
-            <div>
-              <h3>Leave you independent</h3>
-              <p>A clear writeup, a reusable notebook, or a tiny dashboard — not a forever retainer.</p>
-            </div>
-          </li>
-        </ul>
-      </section>
+  <div class="shell">
+    <div class="marquee rise"><div id="ticker"></div></div>
+  </div>
 
-      <section id="contact" class="section contact">
-        <div class="contact-panel">
-          <p class="section-tag">Send a quest</p>
-          <h2>Got something stuck that matters?</h2>
-          <p>Tell us who it’s for and what “done” looks like. If we can help, we’ll say yes fast.</p>
-          <form class="contact-form">
-            <label>
-              <span>Name</span>
-              <input type="text" name="name" autocomplete="name" required placeholder="Alex Rivera" />
-            </label>
-            <label>
-              <span>Email</span>
-              <input type="email" name="email" autocomplete="email" required placeholder="you@clinic.org" />
-            </label>
-            <label class="full">
-              <span>What’s the quest?</span>
-              <textarea
-                name="body"
-                rows="4"
-                required
-                placeholder="Who needs this, what data you have, and what success looks like…"
-              ></textarea>
-            </label>
-            <button class="btn btn-primary" type="submit">Send us a quest</button>
-          </form>
+  <section class="lyre-sec" id="lyre-sec">
+    <div class="shell">
+      <div class="lyre-wrap rise">
+        <canvas id="lyre" aria-label="Playable lyre"></canvas>
+        <div class="string-keys" id="keys" aria-label="Lyre strings"></div>
+        <div class="lyre-bar">
+          <span class="lyre-hint">Drag across the strings to play · <b>Orpheon</b> is named after the one who carried this</span>
+          <div class="lyre-ctrl">
+            <button class="mini" id="phrase" type="button">Play a phrase</button>
+            <button class="mini" id="mute" type="button" aria-pressed="false">Sound on</button>
+          </div>
         </div>
-      </section>
-    </main>
+      </div>
+    </div>
+  </section>
 
-    <footer class="site-footer">
-      <p class="brand-foot">Orpheon</p>
-      <p>Two data scientists · Sidequests for good</p>
+  <section id="crew">
+    <div class="shell">
+      <div class="head rise">
+        <p class="kicker">The party</p>
+        <h2>A sensei and a student, and nobody in between.</h2>
+        <p>No account managers, no bench, no handoff to someone you've never met. Whatever the quest is, both of us are on it.</p>
+      </div>
+
+      <div class="crew">
+        <article class="person rise">
+          <div class="radar">
+            <canvas data-radar="0" aria-hidden="true"></canvas>
+            <!-- to use a photo: replace this .face block with <div class="face"><img src="frieren.png" alt=""></div> -->
+            <div class="face">
+              <svg viewBox="0 0 100 100" role="img" aria-label="Sensei sigil">
+                <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#2E7BFF"/><stop offset="1" stop-color="#7FC4FF"/>
+                </linearGradient></defs>
+                <rect width="100" height="100" fill="#EAF3FF"/>
+                <circle cx="50" cy="50" r="31" fill="none" stroke="url(#sg)" stroke-width="1.3" opacity=".5"/>
+                <circle cx="50" cy="50" r="23" fill="none" stroke="url(#sg)" stroke-width="1" opacity=".35" stroke-dasharray="3 5"/>
+                <path d="M50 22 L50 80" stroke="url(#sg)" stroke-width="3.4" stroke-linecap="round"/>
+                <path d="M38 32 A16 16 0 1 1 62 32" fill="none" stroke="url(#sg)" stroke-width="3.4" stroke-linecap="round"/>
+                <circle cx="50" cy="26" r="4.6" fill="#3FD3C0"/>
+                <path d="M50 60 l7 7 -7 7 -7 -7 Z" fill="url(#sg)" opacity=".85"/>
+                <circle cx="26" cy="36" r="1.9" fill="#3FD3C0"/><circle cx="76" cy="60" r="1.9" fill="#3FD3C0"/>
+                <circle cx="72" cy="30" r="1.2" fill="#2E7BFF"/><circle cx="28" cy="68" r="1.2" fill="#2E7BFF"/>
+              </svg>
+            </div>
+            <span class="lvl">Lv. 99 · Sensei</span>
+          </div>
+          <div class="person-body">
+            <h3>Frieren</h3>
+            <p class="handle">🜁 The Sensei</p>
+            <p class="role">Arch-exorcist of data</p>
+            <p class="bio">Ten years of experience, most of it spent banishing the demons already living in the spreadsheet. Won't fit a model until the data has confessed.</p>
+            <ul class="chips"><li>Causal inference</li><li>R</li><li>Forecasting</li><li>Survey design</li></ul>
+          </div>
+        </article>
+
+        <article class="person rise">
+          <div class="radar">
+            <canvas data-radar="1" aria-hidden="true"></canvas>
+            <!-- to use a photo: replace this .face block with <div class="face"><img src="pikachu.png" alt=""></div> -->
+            <div class="face">
+              <svg viewBox="0 0 100 100" role="img" aria-label="Student sigil">
+                <defs><linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#FFDB92"/><stop offset="1" stop-color="#FFB13D"/>
+                </linearGradient></defs>
+                <rect width="100" height="100" fill="#FFF6E2"/>
+                <circle cx="50" cy="50" r="31" fill="none" stroke="#FFB13D" stroke-width="1.3" opacity=".5"/>
+                <circle cx="50" cy="50" r="23" fill="none" stroke="#FFB13D" stroke-width="1" opacity=".35" stroke-dasharray="3 5"/>
+                <path d="M57 20 L36 52 H50 L43 80 L66 46 H52 Z" fill="url(#bg2)" stroke="#F59A16" stroke-width="1.6" stroke-linejoin="round"/>
+                <circle cx="27" cy="34" r="2" fill="#F59A16"/><circle cx="75" cy="64" r="2" fill="#F59A16"/>
+                <circle cx="73" cy="32" r="1.3" fill="#FFB13D"/><circle cx="27" cy="66" r="1.3" fill="#FFB13D"/>
+              </svg>
+            </div>
+            <span class="lvl">Lv. 42 · Student</span>
+          </div>
+          <div class="person-body">
+            <h3>Pikachu</h3>
+            <p class="handle">⚡ The Student</p>
+            <p class="role">Pipeline-bolter of raw data</p>
+            <p class="bio">Builds the thing that runs at 6am so nobody has to remember to run it. Turns "can you just export it" into something that exports itself, then asks the sensei why it broke.</p>
+            <ul class="chips"><li>Python</li><li>dbt</li><li>Postgres</li><li>Dashboards</li></ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="close" id="contact">
+    <div class="shell">
+      <h2 class="rise">Got a quest <em>worth taking?</em></h2>
+      <p class="rise">Anyone can send one. Tell us the question, roughly what data exists, and why it matters. The stranger it is, the faster we'll answer.</p>
+      <a class="btn btn-solid magnet rise" href="mailto:hello@orpheon.io">hello@orpheon.io</a>
+    </div>
+  </section>
+
+  <div class="shell">
+    <footer>
+      <span>Orpheon — two data scientists on quests</span>
+      <span>Chennai · © 2026</span>
     </footer>
+  </div>
+</div>
 
-    <script src="main.js"></script>
-  </body>
+<script>
+(() => {
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const lerp = (a,b,t) => a + (b-a)*t;
+
+/* ---------- wordmark ---------- */
+const wm = document.getElementById('wordmark');
+[...'ORPHEON'].forEach((ch,i)=>{
+  const s=document.createElement('span'); s.textContent=ch;
+  s.style.transition='opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1), filter .9s';
+  s.style.transitionDelay=(0.15+i*0.07)+'s'; wm.appendChild(s);
+});
+requestAnimationFrame(()=>[...wm.children].forEach(s=>{s.style.opacity=1;s.style.transform='none';s.style.filter='none'}));
+
+/* ---------- ticker ---------- */
+const WORDS=['Python','R','Causal inference','dbt','Postgres','Streamlit','Geospatial','Survey design','Forecasting','Data cleaning that nobody thanks you for','Handover docs','Plain-language reporting'];
+const tick=document.getElementById('ticker');
+const row=WORDS.map(w=>`<span>${w}</span>`).join('');
+tick.innerHTML=row+row;
+
+/* ---------- reveals + counters ---------- */
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting) return;
+  e.target.classList.add('in'); io.unobserve(e.target);
+  e.target.querySelectorAll('[data-count]').forEach(countUp);
+}),{threshold:.16});
+document.querySelectorAll('.rise').forEach(el=>io.observe(el));
+
+function countUp(el){
+  const to=+el.dataset.count, sfx=el.dataset.suffix||'', t0=performance.now(), d=1400;
+  (function step(t){
+    const k=Math.min(1,(t-t0)/d), e=1-Math.pow(1-k,3);
+    el.textContent=Math.round(to*e)+sfx;
+    if(k<1) requestAnimationFrame(step);
+  })(t0);
+}
+
+/* ---------- nav, progress, spotlight, magnets ---------- */
+const nav=document.getElementById('nav'), prog=document.getElementById('progress');
+addEventListener('scroll',()=>{
+  nav.classList.toggle('stuck',scrollY>30);
+  const max=document.body.scrollHeight-innerHeight;
+  prog.style.width=(max>0?scrollY/max*100:0)+'%';
+},{passive:true});
+
+const spot=document.getElementById('spot');
+let sx=innerWidth/2, sy=innerHeight/2, tx=sx, ty=sy;
+const pointer={x:innerWidth/2,y:innerHeight/2,ex:innerWidth/2,ey:innerHeight/2};
+addEventListener('pointermove',e=>{tx=e.clientX; ty=e.clientY; pointer.x=e.clientX; pointer.y=e.clientY;},{passive:true});
+
+document.querySelectorAll('.magnet').forEach(b=>{
+  b.addEventListener('pointermove',e=>{
+    const r=b.getBoundingClientRect();
+    b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.18}px,${(e.clientY-r.top-r.height/2)*.3}px)`;
+  });
+  b.addEventListener('pointerleave',()=>b.style.transform='');
+});
+
+/* ---------- party radar charts ---------- */
+const RADAR = [
+  {axes:['Stats','Causal','Rigour','Domain','Patience','Writing'], vals:[.97,.94,.99,.82,1.0,.88], col:'#1552C6', col2:'#7FC4FF'},
+  {axes:['Engineering','Automation','Speed','Dashboards','Stats','Docs'], vals:[.92,.96,.90,.82,.60,.66], col:'#F59A16', col2:'#FFD07A'}
+];
+const radars = [...document.querySelectorAll('[data-radar]')].map(cv=>{
+  const c = cv.getContext('2d'), cfg = RADAR[+cv.dataset.radar];
+  const fit = () => {
+    const d = Math.min(devicePixelRatio||1,2), s = cv.clientWidth || 228;
+    cv.width = s*d; cv.height = s*d; c.setTransform(d,0,0,d,0,0); cv.__s = s;
+  };
+  fit(); addEventListener('resize',fit);
+  return {cv,c,cfg,p:0,on:false};
+});
+const rio = new IntersectionObserver(es=>es.forEach(e=>{
+  const r = radars.find(x=>x.cv===e.target);
+  if(r && e.isIntersecting){ r.on=true; rio.unobserve(e.target); }
+}),{threshold:.3});
+radars.forEach(r=>rio.observe(r.cv));
+
+function drawRadars(t){
+  radars.forEach(r=>{
+    const {c,cfg} = r, s = r.cv.__s || 228, cx = s/2, cy = s/2, R = s*0.42, N = cfg.axes.length;
+    if(r.on) r.p = Math.min(1, r.p + 0.022);
+    const e = 1 - Math.pow(1 - r.p, 3);
+    c.clearRect(0,0,s,s);
+    const ang = i => -Math.PI/2 + i/N*Math.PI*2 + Math.sin(t*.12)*.03;
+
+    for(let k=1;k<=4;k++){
+      c.beginPath();
+      for(let i=0;i<=N;i++){
+        const a=ang(i%N), rr=R*k/4, x=cx+Math.cos(a)*rr, y=cy+Math.sin(a)*rr;
+        i?c.lineTo(x,y):c.moveTo(x,y);
+      }
+      c.closePath();
+      c.strokeStyle = k===4 ? 'rgba(46,123,255,.22)' : 'rgba(46,123,255,.11)';
+      c.lineWidth = 1; c.stroke();
+    }
+    for(let i=0;i<N;i++){
+      const a=ang(i);
+      c.beginPath(); c.moveTo(cx,cy); c.lineTo(cx+Math.cos(a)*R, cy+Math.sin(a)*R);
+      c.strokeStyle='rgba(46,123,255,.10)'; c.stroke();
+    }
+
+    const pts = cfg.vals.map((v,i)=>{
+      const a=ang(i), wob = 1 + Math.sin(t*1.1 + i*1.3)*0.018, rr = R*v*e*wob;
+      return [cx+Math.cos(a)*rr, cy+Math.sin(a)*rr];
+    });
+    c.beginPath(); pts.forEach(([x,y],i)=> i?c.lineTo(x,y):c.moveTo(x,y)); c.closePath();
+    const gr=c.createLinearGradient(0,0,s,s);
+    gr.addColorStop(0,cfg.col+'40'); gr.addColorStop(1,cfg.col2+'4D');
+    c.fillStyle=gr; c.fill();
+    c.strokeStyle=cfg.col; c.lineWidth=2; c.lineJoin='round';
+    c.shadowBlur=12; c.shadowColor=cfg.col2; c.stroke(); c.shadowBlur=0;
+    pts.forEach(([x,y])=>{
+      c.beginPath(); c.arc(x,y,3,0,7); c.fillStyle='#fff'; c.fill();
+      c.strokeStyle=cfg.col; c.lineWidth=1.6; c.stroke();
+    });
+
+    c.font='600 8px "IBM Plex Mono", monospace';
+    c.textAlign='center'; c.textBaseline='middle';
+    c.fillStyle='rgba(90,116,146,'+(0.35+0.55*e)+')';
+    cfg.axes.forEach((lab,i)=>{
+      const a=ang(i), rr=R+13;
+      c.fillText(lab.toUpperCase(), cx+Math.cos(a)*rr, cy+Math.sin(a)*rr);
+    });
+
+    if(r.p>=1){
+      const a=-Math.PI/2+(t*0.5)%(Math.PI*2);
+      const sg=c.createLinearGradient(cx,cy,cx+Math.cos(a)*R,cy+Math.sin(a)*R);
+      sg.addColorStop(0,cfg.col2+'00'); sg.addColorStop(1,cfg.col2+'66');
+      c.beginPath(); c.moveTo(cx,cy); c.lineTo(cx+Math.cos(a)*R,cy+Math.sin(a)*R);
+      c.strokeStyle=sg; c.lineWidth=2; c.stroke();
+    }
+  });
+}
+
+/* ---------- string synth (Karplus-Strong) ---------- */
+const NOTES = [293.66, 329.63, 369.99, 440.00, 493.88, 587.33, 659.25]; // D major pentatonic-ish, low → high
+let actx=null, master=null, muted=false;
+const bufCache = {};
+
+function initAudio(){
+  if(actx) return;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if(!AC) return;
+  actx = new AC();
+  master = actx.createGain(); master.gain.value = 0.5;
+  // small hall from a decaying noise impulse
+  const len = Math.floor(actx.sampleRate * 1.7);
+  const imp = actx.createBuffer(2, len, actx.sampleRate);
+  for(let c=0;c<2;c++){
+    const d = imp.getChannelData(c);
+    for(let i=0;i<len;i++) d[i] = (Math.random()*2-1) * Math.pow(1 - i/len, 2.8);
+  }
+  const verb = actx.createConvolver(); verb.buffer = imp;
+  const wet = actx.createGain(); wet.gain.value = 0.32;
+  master.connect(actx.destination);
+  master.connect(verb); verb.connect(wet); wet.connect(actx.destination);
+}
+
+function stringBuffer(freq){
+  const key = Math.round(freq);
+  if(bufCache[key]) return bufCache[key];
+  const sr = actx.sampleRate, len = Math.floor(sr * 2.4), N = Math.round(sr / freq);
+  const b = actx.createBuffer(1, len, sr), d = b.getChannelData(0);
+  for(let i=0;i<=N;i++) d[i] = Math.random()*2 - 1;          // noise burst = the pluck
+  const decay = 0.9965;
+  for(let i=N+1;i<len;i++) d[i] = (d[i-N] + d[i-N-1]) * 0.5 * decay;   // delay line + averaging filter
+  const fade = Math.floor(sr*0.25);
+  for(let i=0;i<fade;i++) d[len-1-i] *= i/fade;              // no click at the tail
+  bufCache[key] = b;
+  return b;
+}
+
+function pluckSound(i, vel=1){
+  if(muted) return;
+  initAudio();
+  if(!actx) return;
+  if(actx.state === 'suspended') actx.resume();
+  const src = actx.createBufferSource();
+  src.buffer = stringBuffer(NOTES[i]);
+  const g = actx.createGain();
+  g.gain.value = 0.32 * vel * (1 - i*0.03);
+  const lp = actx.createBiquadFilter();
+  lp.type = 'lowpass'; lp.frequency.value = 2600 + vel*2200;
+  src.connect(lp); lp.connect(g); g.connect(master);
+  src.start();
+}
+
+/* ---------- lyre geometry (drawn once, then sampled into dots) ---------- */
+const STRINGS = 7;
+function buildLyre(s){
+  const o = document.createElement('canvas'), pad = 26;
+  const H2 = s*1.30;
+  o.width = Math.ceil(s + pad*2); o.height = Math.ceil(H2 + pad*2);
+  const c = o.getContext('2d');
+  c.translate(pad, pad);
+  c.fillStyle = c.strokeStyle = '#000'; c.lineCap = 'round'; c.lineJoin = 'round';
+  const mid = s/2, armTop = H2*0.10, barY = H2*0.20, boxTop = H2*0.68, boxBot = H2*0.98;
+
+  [-1,1].forEach(dir=>{
+    c.lineWidth = s*0.055;
+    c.beginPath();
+    c.moveTo(mid + dir*s*0.20, boxTop);
+    c.bezierCurveTo(mid + dir*s*0.62, H2*0.56, mid + dir*s*0.56, H2*0.24, mid + dir*s*0.34, armTop + s*0.06);
+    c.stroke();
+    const cx = mid + dir*s*0.30, cy = armTop + s*0.045, r0 = s*0.075;
+    c.lineWidth = s*0.026;
+    c.beginPath();
+    for(let a=0;a<=Math.PI*3.1;a+=0.06){
+      const r = r0*(1 - a/(Math.PI*3.4));
+      const x = cx + Math.cos(a)*r*dir, y = cy + Math.sin(a)*r;
+      a ? c.lineTo(x,y) : c.moveTo(x,y);
+    }
+    c.stroke();
+  });
+
+  c.lineWidth = s*0.042;
+  c.beginPath(); c.moveTo(mid - s*0.30, barY); c.lineTo(mid + s*0.30, barY); c.stroke();
+  for(let i=0;i<STRINGS;i++){
+    const x = mid + (i-(STRINGS-1)/2) * (s*0.46/(STRINGS-1));
+    c.beginPath(); c.arc(x, barY - s*0.045, s*0.017, 0, 7); c.fill();
+    c.lineWidth = s*0.012;
+    c.beginPath(); c.moveTo(x, barY); c.lineTo(x, barY - s*0.045); c.stroke();
+  }
+
+  c.lineWidth = s*0.05;
+  c.beginPath();
+  c.moveTo(mid - s*0.24, boxTop); c.lineTo(mid + s*0.24, boxTop);
+  c.lineTo(mid + s*0.17, boxBot - s*0.06);
+  c.quadraticCurveTo(mid, boxBot + s*0.02, mid - s*0.17, boxBot - s*0.06);
+  c.closePath(); c.stroke();
+  c.lineWidth = s*0.022;
+  c.beginPath(); c.moveTo(mid - s*0.20, boxTop + s*0.10); c.lineTo(mid + s*0.20, boxTop + s*0.10); c.stroke();
+  c.beginPath(); c.arc(mid, boxTop + s*0.24, s*0.05, 0, 7); c.stroke();
+
+  const img = c.getImageData(0,0,o.width,o.height).data;
+  const pts = [], step = Math.max(3, Math.round(s/130));
+  for(let y=0;y<o.height;y+=step) for(let x=0;x<o.width;x+=step){
+    if(img[(y*o.width+x)*4+3] > 90 && Math.random() > .16){
+      pts.push({ox:x, oy:y, r:Math.random()*1.4+0.6, ph:Math.random()*6.28,
+                sp:Math.random()*0.9+0.25, j:Math.random()*1.6+0.4,
+                c: Math.random()<.22 ? '#3FD3C0' : (Math.random()<.25 ? '#7FC4FF' : '#2E7BFF')});
+    }
+  }
+  return {pts, w:o.width, h:o.height, mid:mid+pad, barY:barY+pad, boxTop:boxTop+pad, spread:s*0.46};
+}
+
+function drawLyreDots(c, m, ox, oy, alpha, t){
+  m.pts.forEach(p=>{
+    const tw = 0.45 + 0.55*Math.sin(t*p.sp*2 + p.ph);
+    c.globalAlpha = alpha * (0.30 + 0.60*tw);
+    c.fillStyle = p.c;
+    c.beginPath();
+    c.arc(ox + p.ox + Math.sin(t*p.sp + p.ph)*p.j, oy + p.oy + Math.cos(t*p.sp*.8 + p.ph)*p.j, p.r, 0, 7);
+    c.fill();
+  });
+  c.globalAlpha = 1;
+}
+
+function drawStrings(c, m, ox, oy, amps, alpha, t){
+  const gap = m.spread/(STRINGS-1), y0 = oy + m.barY, y1 = oy + m.boxTop;
+  c.shadowBlur = 8; c.shadowColor = '#7FC4FF';
+  for(let i=0;i<STRINGS;i++){
+    const a = amps[i];
+    a.amp *= 0.945; a.phase += 0.34;
+    const sx = ox + m.mid + (i-(STRINGS-1)/2)*gap;
+    c.globalAlpha = alpha * (0.5 + Math.min(.5, a.amp/16));
+    c.strokeStyle = a.amp > 1 ? '#1552C6' : 'rgba(46,123,255,.7)';
+    c.lineWidth = 1 + Math.min(1.6, a.amp/10);
+    c.beginPath();
+    for(let y=y0;y<=y1;y+=5){
+      const k = (y-y0)/(y1-y0);
+      const off = Math.sin(k*Math.PI) * Math.sin(a.phase) * a.amp;
+      y===y0 ? c.moveTo(sx,y) : c.lineTo(sx+off, y);
+    }
+    c.stroke();
+  }
+  c.shadowBlur = 0; c.globalAlpha = 1;
+}
+
+/* ---------- the playable lyre ---------- */
+const lcv = document.getElementById('lyre'), lc = lcv.getContext('2d');
+const amps = Array.from({length:STRINGS}, ()=>({amp:0, phase:0}));
+let lyreModel = null, lox = 0, loy = 0, lw = 0, lh = 0;
+const lastHit = new Array(STRINGS).fill(0);
+
+function sizeLyre(){
+  const d = Math.min(devicePixelRatio||1, 2);
+  lw = lcv.clientWidth; lh = lcv.clientHeight;
+  lcv.width = lw*d; lcv.height = lh*d; lc.setTransform(d,0,0,d,0,0);
+  lyreModel = buildLyre(Math.min(lh*0.62, lw*0.42, 340));
+  lox = lw/2 - lyreModel.w/2; loy = lh/2 - lyreModel.h/2;
+  layoutKeys();
+}
+
+function pluck(i, vel=1){
+  const now = performance.now();
+  if(now - lastHit[i] < 80) return;
+  lastHit[i] = now;
+  amps[i].amp = Math.min(17, amps[i].amp + 11*vel);
+  amps[i].phase = 0;
+  pluckSound(i, vel);
+}
+
+lcv.addEventListener('pointermove', e=>{
+  const r = lcv.getBoundingClientRect();
+  const x = e.clientX - r.left, y = e.clientY - r.top;
+  const gap = lyreModel.spread/(STRINGS-1);
+  if(y < loy + lyreModel.barY || y > loy + lyreModel.boxTop) return;
+  for(let i=0;i<STRINGS;i++){
+    const sx = lox + lyreModel.mid + (i-(STRINGS-1)/2)*gap;
+    if(Math.abs(x - sx) < 13) pluck(i, 0.9);
+  }
+});
+lcv.addEventListener('pointerdown', e=>{
+  const r = lcv.getBoundingClientRect();
+  const x = e.clientX - r.left;
+  const gap = lyreModel.spread/(STRINGS-1);
+  let best = 0, bd = 1e9;
+  for(let i=0;i<STRINGS;i++){
+    const sx = lox + lyreModel.mid + (i-(STRINGS-1)/2)*gap;
+    const d = Math.abs(x - sx); if(d < bd){ bd = d; best = i; }
+  }
+  lastHit[best] = 0; pluck(best, 1);
+});
+
+/* keyboard-reachable strings */
+const keys = document.getElementById('keys');
+const NAMES = ['D','E','F♯','A','B','D','E'];
+for(let i=0;i<STRINGS;i++){
+  const b = document.createElement('button');
+  b.type = 'button'; b.textContent = 'Pluck string ' + NAMES[i];
+  b.setAttribute('aria-label', 'Pluck string ' + NAMES[i]);
+  b.addEventListener('click', ()=>{ lastHit[i]=0; pluck(i,1); });
+  keys.appendChild(b);
+}
+function layoutKeys(){
+  if(!lyreModel) return;
+  const gap = lyreModel.spread/(STRINGS-1);
+  keys.style.height = (loy + lyreModel.boxTop) + 'px';
+  [...keys.children].forEach((b,i)=>{
+    const sx = lox + lyreModel.mid + (i-(STRINGS-1)/2)*gap;
+    b.style.position = 'absolute';
+    b.style.left = (sx - 17) + 'px';
+    b.style.top = (loy + lyreModel.barY) + 'px';
+    b.style.height = (lyreModel.boxTop - lyreModel.barY) + 'px';
+  });
+}
+
+document.getElementById('phrase').addEventListener('click', ()=>{
+  initAudio();
+  const seq = [0,2,4,6,4,2,3,5,6,5,3,1,0];
+  seq.forEach((n,i)=> setTimeout(()=>{ lastHit[n]=0; pluck(n, .55 + Math.random()*.4); }, i*185));
+});
+const muteBtn = document.getElementById('mute');
+muteBtn.addEventListener('click', ()=>{
+  muted = !muted;
+  muteBtn.setAttribute('aria-pressed', muted ? 'true':'false');
+  muteBtn.textContent = muted ? 'Sound off' : 'Sound on';
+});
+
+/* ---------- hero chart ---------- */
+const ch=document.getElementById('chart'), cx2=ch.getContext('2d');
+let cw=0, chh=0;
+function sizeChart(){
+  const dpr=Math.min(devicePixelRatio||1,2);
+  cw=ch.clientWidth; chh=ch.clientHeight;
+  ch.width=cw*dpr; ch.height=chh*dpr; cx2.setTransform(dpr,0,0,dpr,0,0);
+}
+const seriesA=[], seriesB=[];
+for(let i=0;i<38;i++){seriesA.push(Math.random()*.4+.3); seriesB.push(Math.random()*.35+.2);}
+function drawChart(t){
+  if(!cw) return;
+  cx2.clearRect(0,0,cw,chh);
+  cx2.strokeStyle='rgba(46,123,255,.10)'; cx2.lineWidth=1;
+  for(let i=0;i<=4;i++){const y=10+i*(chh-30)/4; cx2.beginPath(); cx2.moveTo(0,y); cx2.lineTo(cw,y); cx2.stroke();}
+  [[seriesA,'#2E7BFF','rgba(46,123,255,.16)',0],[seriesB,'#3FD3C0','rgba(63,211,192,.16)',1.7]].forEach(([s,col,fill,off])=>{
+    const pts=s.map((v,i)=>{
+      const x=i/(s.length-1)*cw;
+      const wave=Math.sin(t*.9+i*.34+off)*.06+Math.sin(t*.4+i*.12)*.04;
+      return [x, chh-16-(v+wave)*(chh-40)];
+    });
+    cx2.beginPath(); cx2.moveTo(pts[0][0],pts[0][1]);
+    for(let i=1;i<pts.length;i++){
+      const [x0,y0]=pts[i-1],[x1,y1]=pts[i];
+      cx2.bezierCurveTo(x0+(x1-x0)/2,y0,x0+(x1-x0)/2,y1,x1,y1);
+    }
+    cx2.strokeStyle=col; cx2.lineWidth=2; cx2.stroke();
+    cx2.lineTo(cw,chh); cx2.lineTo(0,chh); cx2.closePath();
+    cx2.fillStyle=fill; cx2.fill();
+    const [lx,ly]=pts[pts.length-1];
+    cx2.beginPath(); cx2.arc(lx-1,ly,3.5,0,7); cx2.fillStyle=col; cx2.fill();
+    cx2.beginPath(); cx2.arc(lx-1,ly,3.5+Math.abs(Math.sin(t*2))*6,0,7);
+    cx2.strokeStyle=col; cx2.globalAlpha=.35-Math.abs(Math.sin(t*2))*.3; cx2.stroke(); cx2.globalAlpha=1;
+  });
+}
+
+/* ---------- background canvas ---------- */
+const cv=document.getElementById('bg'), ctx=cv.getContext('2d');
+let W=0,H=0,DPR=1,dots=[],nodes=[],blobs=[],ghost=null;
+
+function resize(){
+  DPR=Math.min(devicePixelRatio||1,2);
+  W=innerWidth;H=innerHeight;
+  cv.width=W*DPR; cv.height=H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0);
+
+  const gap=Math.max(30,Math.round(W/44));
+  dots=[];
+  for(let y=gap/2;y<H;y+=gap) for(let x=gap/2;x<W;x+=gap) dots.push({x,y,ph:(x+y)*.01});
+
+  nodes=Array.from({length:Math.round(W/26)},()=>({
+    x:Math.random()*W,y:Math.random()*H,
+    vx:(Math.random()-.5)*.28,vy:(Math.random()-.5)*.28,
+    r:Math.random()*2+1.4
+  }));
+
+  blobs=[
+    {x:.18,y:.22,r:.55,c:[127,196,255],sp:.11,ph:0},
+    {x:.82,y:.30,r:.48,c:[63,211,192],sp:.09,ph:2.1},
+    {x:.60,y:.80,r:.62,c:[46,123,255],sp:.07,ph:4.2},
+    {x:.30,y:.72,r:.44,c:[168,199,255],sp:.13,ph:1.2}
+  ];
+  sizeChart();
+  sizeLyre();
+  ghost = buildLyre(Math.min(W*0.30, H*0.52, 300));
+}
+addEventListener('resize',resize); resize();
+
+let t=0;
+function frame(){
+  t+=1/60;
+  pointer.ex=lerp(pointer.ex,pointer.x,.07); pointer.ey=lerp(pointer.ey,pointer.y,.07);
+  sx=lerp(sx,tx,.12); sy=lerp(sy,ty,.12);
+  spot.style.transform=`translate(${sx}px,${sy}px)`;
+
+  const g=ctx.createLinearGradient(0,0,W*.4,H);
+  g.addColorStop(0,'#FFFFFF'); g.addColorStop(.55,'#F4F9FF'); g.addColorStop(1,'#E4F0FF');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+  blobs.forEach(b=>{
+    const bx=(b.x+Math.sin(t*b.sp+b.ph)*.10)*W;
+    const by=(b.y+Math.cos(t*b.sp*1.3+b.ph)*.08)*H;
+    const br=b.r*Math.max(W,H)*(0.6+0.06*Math.sin(t*b.sp*2+b.ph));
+    const rg=ctx.createRadialGradient(bx,by,0,bx,by,br);
+    rg.addColorStop(0,`rgba(${b.c[0]},${b.c[1]},${b.c[2]},.30)`);
+    rg.addColorStop(1,`rgba(${b.c[0]},${b.c[1]},${b.c[2]},0)`);
+    ctx.fillStyle=rg; ctx.fillRect(0,0,W,H);
+  });
+
+  dots.forEach(d=>{
+    const dx=d.x-pointer.ex, dy=d.y-pointer.ey;
+    const dist=Math.hypot(dx,dy), near=Math.max(0,1-dist/280);
+    const wave=Math.sin(t*1.5+d.ph)*.5+.5;
+    const r=(0.8+wave*0.7)+near*2.6, push=near*14;
+    ctx.globalAlpha=.10+wave*.10+near*.45;
+    ctx.fillStyle=near>.45?'#3FD3C0':'#2E7BFF';
+    ctx.beginPath();
+    ctx.arc(d.x+(dist?dx/dist*push:0), d.y+(dist?dy/dist*push:0), r, 0, 7);
+    ctx.fill();
+  });
+
+  ctx.globalAlpha=1;
+  for(let i=0;i<nodes.length;i++){
+    const n=nodes[i];
+    n.x+=n.vx; n.y+=n.vy;
+    if(n.x<-40)n.x=W+40; if(n.x>W+40)n.x=-40;
+    if(n.y<-40)n.y=H+40; if(n.y>H+40)n.y=-40;
+    for(let j=i+1;j<nodes.length;j++){
+      const m=nodes[j], d=Math.hypot(n.x-m.x,n.y-m.y);
+      if(d<150){
+        ctx.globalAlpha=(1-d/150)*.20;
+        ctx.strokeStyle='#2E7BFF'; ctx.lineWidth=1;
+        ctx.beginPath(); ctx.moveTo(n.x,n.y); ctx.lineTo(m.x,m.y); ctx.stroke();
+      }
+    }
+    const near=Math.max(0,1-Math.hypot(n.x-pointer.ex,n.y-pointer.ey)/240);
+    ctx.globalAlpha=.22+near*.5;
+    ctx.fillStyle=near>.5?'#1552C6':'#7FC4FF';
+    ctx.beginPath(); ctx.arc(n.x,n.y,n.r+near*2,0,7); ctx.fill();
+  }
+
+  ctx.globalAlpha=1;
+  for(let k=0;k<3;k++){
+    ctx.beginPath();
+    for(let x=0;x<=W;x+=8){
+      const y=H*0.86+Math.sin(x*0.006+t*0.8+k*1.4)*26+Math.sin(x*0.017-t*1.1+k)*10+k*16;
+      x?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    }
+    ctx.strokeStyle=k===1?'rgba(63,211,192,.28)':'rgba(46,123,255,.20)';
+    ctx.lineWidth=1.4; ctx.stroke();
+  }
+  ctx.globalAlpha=1;
+
+  drawChart(t);
+  drawRadars(t);
+
+  // the playable lyre
+  if(lyreModel){
+    lc.clearRect(0,0,lw,lh);
+    const lg = lc.createLinearGradient(0,0,lw,lh);
+    lg.addColorStop(0,'rgba(255,255,255,0)'); lg.addColorStop(1,'rgba(206,232,255,.35)');
+    lc.fillStyle = lg; lc.fillRect(0,0,lw,lh);
+    for(let x=0;x<lw;x+=22){
+      const y = lh*0.5 + Math.sin(x*0.012 + t*1.2)*(6 + amps.reduce((a,b)=>a+b.amp,0)*0.5);
+      lc.globalAlpha = .18; lc.fillStyle = '#7FC4FF';
+      lc.fillRect(x, y, 2, 2);
+    }
+    lc.globalAlpha = 1;
+    drawLyreDots(lc, lyreModel, lox, loy, 1, t);
+    drawStrings(lc, lyreModel, lox, loy, amps, 1, t);
+  }
+
+  requestAnimationFrame(frame);
+}
+
+if(reduce){ t=1.2; radars.forEach(r=>{r.on=true; r.p=1;});
+  const raf=requestAnimationFrame; window.requestAnimationFrame=()=>0; frame(); window.requestAnimationFrame=raf; }
+else frame();
+})();
+</script>
+</body>
 </html>
