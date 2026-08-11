@@ -167,6 +167,24 @@ section{padding:110px 0; position:relative}
 .string-keys button{width:34px; border:0; background:transparent; pointer-events:auto; cursor:pointer;
   color:transparent; font-size:0}
 .string-keys button:focus-visible{outline:2px solid var(--blue); outline-offset:-6px; border-radius:8px}
+#data-words{position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:2}
+.data-word{
+  position:absolute; left:0; top:0; margin:0;
+  font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:500;
+  letter-spacing:.14em; text-transform:uppercase; white-space:nowrap;
+  color:var(--deep); opacity:0; transform:translate(-50%,-50%) scale(.85);
+  text-shadow:0 0 18px rgba(127,196,255,.55);
+  animation:wordBurst 1.35s cubic-bezier(.2,.7,.2,1) forwards;
+  will-change:transform, opacity;
+}
+.data-word.tone-aqua{color:var(--aqua)}
+.data-word.tone-sky{color:var(--blue)}
+.data-word.tone-amber{color:var(--amber)}
+@keyframes wordBurst{
+  0%{opacity:0; transform:translate(-50%,-50%) scale(.7)}
+  12%{opacity:1; transform:translate(calc(-50% + var(--dx)*.18), calc(-50% + var(--dy)*.18)) scale(1.05)}
+  100%{opacity:0; transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1)}
+}
 @media (max-width:960px){ #lyre{height:340px} }
 
 /* ---------- close ---------- */
@@ -259,6 +277,7 @@ footer span{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacin
       <div class="lyre-wrap rise">
         <canvas id="lyre" aria-label="Playable lyre"></canvas>
         <div class="string-keys" id="keys" aria-label="Lyre strings"></div>
+        <div id="data-words" aria-hidden="true"></div>
         <div class="lyre-bar">
           <span class="lyre-hint">Drag across the strings to play · <b>Orpheon</b> is named after the one who carried this</span>
           <div class="lyre-ctrl">
@@ -657,6 +676,39 @@ function pluck(i, vel=1){
   amps[i].amp = Math.min(17, amps[i].amp + 11*vel);
   amps[i].phase = 0;
   pluckSound(i, vel);
+  emitDataWord(i);
+}
+
+/* ---------- data words that fly out on each pluck ---------- */
+const DATA_WORDS = [
+  'Python','R','SQL','stats','mean','mode','median','variance','regression',
+  'visualisation','dashboard','pipeline','feature','model','forecast','causal',
+  'distribution','outlier','correlation','hypothesis','sample','dataframe',
+  'query','ETL','notebook','signal','noise','insight','cluster','bayesian',
+  'AUC','p-value','bootstrap','geospatial','timeseries','cleaning','join'
+];
+const wordLayer = document.getElementById('data-words');
+const tones = ['', 'tone-aqua', 'tone-sky', 'tone-amber'];
+let wordCursor = 0;
+
+function emitDataWord(stringIndex){
+  if(!lyreModel || !wordLayer || reduce) return;
+  const word = DATA_WORDS[wordCursor % DATA_WORDS.length];
+  wordCursor++;
+  const gap = lyreModel.spread / (STRINGS - 1);
+  const sx = lox + lyreModel.mid + (stringIndex - (STRINGS - 1) / 2) * gap;
+  const sy = loy + (lyreModel.barY + lyreModel.boxTop) / 2;
+  const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.35;
+  const dist = 70 + Math.random() * 90;
+  const el = document.createElement('span');
+  el.className = 'data-word ' + tones[Math.floor(Math.random() * tones.length)];
+  el.textContent = word;
+  el.style.left = sx + 'px';
+  el.style.top = sy + 'px';
+  el.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+  el.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+  wordLayer.appendChild(el);
+  el.addEventListener('animationend', () => el.remove());
 }
 
 lcv.addEventListener('pointermove', e=>{
